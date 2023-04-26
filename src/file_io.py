@@ -35,22 +35,6 @@ def get_cache_dir(cache_dir: Optional[str] = None) -> str:
     return cache_dir
 
 
-def load_json(fp, show_time=False):
-    if not os.path.exists(fp):
-        print(f"Failed loading {fp} for file-not-existed.")
-        return dict()
-
-    with open(fp, 'r', encoding='utf8') as f:
-        if show_time:
-            start_time = time.time()
-            print(f"Loading {fp.split('/')[-1]} ({get_filesize(fp)}MB)", end=' ')
-            sys.stdout.flush()
-        ret = json.load(f)
-        if show_time:
-            print(f"cost {round(time.time() - start_time, 3)} seconds.")
-        return ret
-
-
 def dump_json(obj, fp, debug=False, compress=True):
     try:
         fp = os.path.abspath(fp)
@@ -70,6 +54,39 @@ def dump_json(obj, fp, debug=False, compress=True):
         if debug:
             print(f'json文件{obj}保存失败, {e}')
         return False
+    
+
+def load_json(fp, show_time=False):
+    if not os.path.exists(fp):
+        print(f"Failed loading {fp} for file-not-existed.")
+        return dict()
+
+    with open(fp, 'r', encoding='utf8') as f:
+        if show_time:
+            start_time = time.time()
+            print(f"Loading {fp.split('/')[-1]} ({get_filesize(fp)}MB)", end=' ')
+            sys.stdout.flush()
+        ret = json.load(f)
+        if show_time:
+            print(f"cost {round(time.time() - start_time, 3)} seconds.")
+        return ret
+
+
+def dump_vocab(obj, fp, show_time=False):
+    # save key-array-items
+    if show_time:
+        start_time = time.time()
+        print(f"Now saving {fp}.", end=' ')
+        sys.stdout.flush()
+    if not os.path.exists(os.path.dirname(fp)):
+        os.makedirs(os.path.dirname(fp))
+    with open(fp, 'w') as f:
+        for line in obj:
+            f.write(f"{line}\n")
+    if show_time:
+        print(f"cost {round(time.time() - start_time, 3)} seconds.")
+        print(f"Saved {fp.split('/')[-1]} ({get_filesize(fp)}MB)")
+        sys.stdout.flush()
 
 
 def load_vocab(fp, show_time=False):
@@ -79,7 +96,7 @@ def load_vocab(fp, show_time=False):
     
     if show_time:
         start_time = time.time()
-        print(f"Loading {fp.split('/')[-1]} ({get_filesize(fp)}MB)", end=' ')
+        print(f"Loading {fp.split('/')[-1]} ({get_filesize(fp)}MB)")
         sys.stdout.flush()
     ret = [line.strip() for line in open(fp, 'r')]
     if show_time:
@@ -91,6 +108,8 @@ def save_kari(obj, fp, show_time=False):
     # save key-array-items
     if show_time:
         start_time = time.time()
+        print(f"Now saving {fp}.", end=' ')
+        sys.stdout.flush()
     if not os.path.exists(os.path.dirname(fp)):
         os.makedirs(os.path.dirname(fp))
     with open(fp, 'w') as f:
@@ -98,10 +117,11 @@ def save_kari(obj, fp, show_time=False):
             f.write(f"{k}\t{' '.join(v)}\n")
     if show_time:
         print(f"cost {round(time.time() - start_time, 3)} seconds.")
-        print(f"Saved {fp.split('/')[-1]} ({get_filesize(fp)}MB)", end=' ')
+        print(f"Saved {fp.split('/')[-1]} ({get_filesize(fp)}MB)")
+        sys.stdout.flush()
 
 
-def load_kari(fp, show_time=False):
+def load_kari(fp, show_time=False, single_item=False):
     # load key-array-items
     if show_time:
         start_time = time.time()
@@ -110,7 +130,9 @@ def load_kari(fp, show_time=False):
     if not os.path.exists(fp):
         print("Failed for file-not-existed.")
         return None
-    ret = {line.strip().split('\t')[0]: line.strip().split('\t')[1].split(' ') 
+    ret = {line.strip().split('\t')[0]: 
+           (line.strip().split('\t')[1].split(' ')[0] if single_item 
+            else line.strip().split('\t')[1].split(' '))
            for line in open(fp, 'r')}
     if show_time:
         print(f"cost {round(time.time() - start_time, 3)} seconds.")
@@ -120,12 +142,15 @@ def load_kari(fp, show_time=False):
 def save_pkl(obj, fp, show_time=False):
     if show_time:
         start_time = time.time()
+        print(f"Now saving {fp}.", end=' ')
+        sys.stdout.flush()
     if not os.path.exists(os.path.dirname(fp)):
         os.makedirs(os.path.dirname(fp))
     pickle.dump(obj, open(fp, 'wb'))
     if show_time:
         print(f"cost {round(time.time() - start_time, 3)} seconds.")
-        print(f"Saved {fp.split('/')[-1]} ({get_filesize(fp)}MB)", end=' ')
+        print(f"Saved {fp.split('/')[-1]} ({get_filesize(fp)}MB)")
+        sys.stdout.flush()
 
 
 def load_pkl(fp, show_time=False):

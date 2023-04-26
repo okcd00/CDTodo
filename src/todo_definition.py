@@ -12,14 +12,18 @@ import time
 
 
 class Todo():
-    def __init__(self, title, endtime=None):
+    def __init__(self, title, tag=None, description=None, endtime=None):
         self.title = title
-        self.description = []
+        self.tag = tag or 'notag'
+        self.description = description
         self.start_time = int(time.time())  # int
         self.end_time = self.analysis_endtime(endtime)
 
-    def analysis_endtime(et):
+    def analysis_endtime(self, et):
         return -1
+    
+    def __getitem__(self, __name: str):
+        return getattr(self, __name)
     
 
 if __name__ == "__main__":
