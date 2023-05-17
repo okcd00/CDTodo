@@ -8,6 +8,9 @@
 #   desc     : record and restore todo from local files
 #              for registering and easy-modification
 # ==========================================================================
+import sys
+sys.path.append('./')
+
 # basic packages
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -15,19 +18,9 @@ from PyQt5.QtWidgets import *
 
 # custom packages
 from panel_with_browser import PanelBrowser
-from file_io import *
+from panel_with_conferences import ConferenceBrowser
+from file_io import * 
 
-
-class twoPanel(QWidget):
-    def __init__(self):
-        super(twoPanel, self).__init__()
-        self.setStyleSheet('''QWidget{background-color:#66ffcc;}''')
-
-        twoPanel_layout = QHBoxLayout()
-        qlabel = QLabel("这是界面2")
-        twoPanel_layout.addWidget(qlabel)
-
-        self.setLayout(twoPanel_layout)
 
 class threePanel(QWidget):
     def __init__(self):
@@ -65,13 +58,13 @@ class MemoryManager(QWidget):
 
         # pages
         self.panel_browser = PanelBrowser()
-        self.panel2 = twoPanel()
+        self.conference_browser = ConferenceBrowser()
         self.panel3 = threePanel()
 
         # stack layout
         self.stack_layout = QStackedLayout()
         self.stack_layout.addWidget(self.panel_browser)
-        self.stack_layout.addWidget(self.panel2)
+        self.stack_layout.addWidget(self.conference_browser)
         self.stack_layout.addWidget(self.panel3)
 
         # main = button + stack
